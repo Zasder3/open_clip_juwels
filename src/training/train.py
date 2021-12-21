@@ -32,9 +32,6 @@ def get_loss(model, images, texts, loss_img, loss_txt, args):
         if args.horovod:
             all_image_features = hvd.allgather(image_features)
             all_text_features = hvd.allgather(text_features)
-
-            if hvd.rank() != 0:
-                return torch.tensor(0, device=all_image_features.device)
         else:
             world_size = dist.get_world_size()
             rank = dist.get_rank()

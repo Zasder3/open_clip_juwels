@@ -130,12 +130,12 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
                 {"params": gain_or_bias_params, "weight_decay": 0.},
                 {"params": rest_params, "weight_decay": args.wd},
             ],
-            lr=args.lr*args.world_size if args.horovod else args.lr,
+            lr=args.lr,
             betas=(args.beta1, args.beta2),
             eps=args.eps,
         )
         total_steps = data["train"].dataloader.num_batches * args.epochs
-        scheduler = cosine_lr(optimizer, args.lr*args.world_size if args.horovod else args.lr, args.warmup, total_steps)
+        scheduler = cosine_lr(optimizer, args.lr, args.warmup, total_steps)
 
         if args.horovod:
             optimizer = hvd.DistributedOptimizer(optimizer, named_parameters=model.named_parameters())
