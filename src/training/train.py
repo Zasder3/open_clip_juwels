@@ -121,7 +121,7 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
                 if args.horovod:
                     with optimizer.skip_synchronize():
                         scaler.scale(total_loss).backward()
-                        optimizer.step()
+                        scaler.step(optimizer)
                 else:
                     scaler.scale(total_loss).backward()
                     scaler.step(optimizer)
