@@ -109,8 +109,6 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
 
         m = model.module if (args.distributed or args.dp) and not args.horovod else model
 
-        if args.horovod and args.precision == 'amp':
-            optimizer.synchronize()
 
         optimizer.zero_grad()
 
@@ -119,8 +117,9 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
             with autocast():
                 total_loss = get_loss(model, images, texts, loss_img, loss_txt, args)
                 if args.horovod:
+                    scaler.scale(total_loss).backward()
+                    optimizer.synchronize()
                     with optimizer.skip_synchronize():
-                        scaler.scale(total_loss).backward()
                         scaler.step(optimizer)
                 else:
                     scaler.scale(total_loss).backward()
