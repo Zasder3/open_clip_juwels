@@ -120,32 +120,46 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
         batch_time = time.time() - end
         end = time.time()
 
-        if is_master(args) and (i % 100) == 0:
-            num_samples = i * len(images) * args.world_size
-            samples_per_epoch = dataloader.num_samples
-            percent_complete = 100.0 * i / num_batches_per_epoch
-            logging.info(
-                f"Train Epoch: {epoch} [{num_samples}/{samples_per_epoch} ({percent_complete:.0f}%)]\t"
-                f"Loss: {total_loss.item():.6f}\tData (t) {data_time:.3f}\tBatch (t) {batch_time:.3f}"
-                f"\tLR: {optimizer.param_groups[0]['lr']:5f}\tlogit_scale {m.logit_scale.data:.3f}"
-            )
-            # save train loss / etc.
+        warmup_iters = 5
+        samples = 50
+        if i == warmup_iters:
+            t1 = time.perf_counter()
+        elif i == warmup_iters + samples:
+            t2 = time.perf_counter()
+            if args.rank == 0:
+                print(f"{t2-t1} seconds for 50 batches")
+                with open(os.path.join(args.logs, args.name, f"{args.model.replace('/', '-')}-ws-{args.world_size}-workers-{args.workers}-time.out"), 'w') as f:
+                    f.write(f"{t2-t1} seconds for 50 batches\n")
+            
+            break
+            
 
-            timestep = epoch * num_batches_per_epoch + i
-            log_data = {
-                "loss": total_loss.item(),
-                "data_time": data_time,
-                "batch_time": batch_time,
-                "scale":  m.logit_scale.data.item(),
-                "lr": optimizer.param_groups[0]["lr"]
-            }
+        # if is_master(args) and (i % 100) == 0:
+        #     num_samples = i * len(images) * args.world_size
+        #     samples_per_epoch = dataloader.num_samples
+        #     percent_complete = 100.0 * i / num_batches_per_epoch
+        #     logging.info(
+        #         f"Train Epoch: {epoch} [{num_samples}/{samples_per_epoch} ({percent_complete:.0f}%)]\t"
+        #         f"Loss: {total_loss.item():.6f}\tData (t) {data_time:.3f}\tBatch (t) {batch_time:.3f}"
+        #         f"\tLR: {optimizer.param_groups[0]['lr']:5f}\tlogit_scale {m.logit_scale.data:.3f}"
+        #     )
+        #     # save train loss / etc.
 
-            for name, val in log_data.items():
-                name = "train/" + name
-                if tb_writer is not None:
-                    tb_writer.add_scalar(name, val, timestep)
-                if args.wandb:
-                    wandb.log({name: val, 'step': timestep})
+        #     timestep = epoch * num_batches_per_epoch + i
+        #     log_data = {
+        #         "loss": total_loss.item(),
+        #         "data_time": data_time,
+        #         "batch_time": batch_time,
+        #         "scale":  m.logit_scale.data.item(),
+        #         "lr": optimizer.param_groups[0]["lr"]
+        #     }
+
+        #     for name, val in log_data.items():
+        #         name = "train/" + name
+        #         if tb_writer is not None:
+        #             tb_writer.add_scalar(name, val, timestep)
+        #         if args.wandb:
+        #             wandb.log({name: val, 'step': timestep})
 
 
 def evaluate(model, data, epoch, args, tb_writer=None, steps=None):
