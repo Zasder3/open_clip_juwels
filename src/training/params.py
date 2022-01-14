@@ -7,11 +7,7 @@ def get_default_params(model_name):
         return {"lr": 5.0e-4, "beta1": 0.9, "beta2": 0.999, "eps": 1.0e-8}
     elif model_name == "ViT-B/32":
         return {"lr": 5.0e-4, "beta1": 0.9, "beta2": 0.98, "eps": 1.0e-6}
-<<<<<<< HEAD
     elif model_name in ["ViT-L/14", "ViT-G/14"]:
-=======
-    elif model_name == "ViT-L/14":
->>>>>>> ae9b0a99549559d2346677aeae368077f53ef0d4
         return {"lr": 4.0e-4, "beta1": 0.9, "beta2": 0.98, "eps": 1.0e-6}
     else:
         return {}
@@ -142,11 +138,7 @@ def parse_args():
     )
     parser.add_argument(
         "--model",
-<<<<<<< HEAD
         choices=["RN50", "RN101", "RN50x4", "ViT-B/32", "ViT-L/14", "ViT-G/14"],
-=======
-        choices=["RN50", "RN101", "RN50x4", "ViT-B/32", "ViT-L/14"],
->>>>>>> ae9b0a99549559d2346677aeae368077f53ef0d4
         default="RN50",
         help="Name of the vision backbone to use.",
     )
