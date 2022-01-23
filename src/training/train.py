@@ -121,15 +121,15 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
         end = time.time()
 
         warmup_iters = 5
-        samples = 50
+        samples = 1000
         if i == warmup_iters:
             t1 = time.perf_counter()
         elif i == warmup_iters + samples:
             t2 = time.perf_counter()
             if args.rank == 0:
-                print(f"{t2-t1} seconds for 50 batches")
-                with open(os.path.join(args.logs, args.name, f"{args.model.replace('/', '-')}-ws-{args.world_size}-workers-{args.workers}-time.out"), 'w') as f:
-                    f.write(f"{t2-t1} seconds for 50 batches\n")
+                print(f"{t2-t1} seconds for {samples} batches")
+                with open(os.path.join(args.logs, args.name, f"{args.model.replace('/', '-')}-ws-{args.world_size}-bs-{args.batch_size}-workers-{args.workers}-time.out"), 'w') as f:
+                    f.write(f"{t2-t1} seconds for {samples} batches\n")
             
             break
             
