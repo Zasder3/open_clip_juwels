@@ -84,13 +84,13 @@ def parse_args():
     parser.add_argument(
         "--epochs", type=int, default=32, help="Number of epochs to train for."
     )
-    parser.add_argument("--lr", type=float, default=None, help="Learning rate.")
+    parser.add_argument("--lr", type=float, default=2e-5, help="Learning rate.")
     parser.add_argument("--beta1", type=float, default=None, help="Adam beta 1.")
     parser.add_argument("--beta2", type=float, default=None, help="Adam beta 2.")
     parser.add_argument("--eps", type=float, default=None, help="Adam epsilon.")
     parser.add_argument("--wd", type=float, default=0.2, help="Weight decay.")
     parser.add_argument(
-        "--warmup", type=int, default=10000, help="Number of steps to warmup for."
+        "--warmup", type=int, default=2000, help="Number of steps to warmup for."
     )
     parser.add_argument("--use-bn-sync",
         default=False,
@@ -139,12 +139,12 @@ def parse_args():
     parser.add_argument(
         "--model",
         choices=["RN50", "RN101", "RN50x4", "ViT-B/32", "ViT-L/14", "ViT-G/14"],
-        default="RN50",
+        default="ViT-L/14",
         help="Name of the vision backbone to use.",
     )
     parser.add_argument(
         "--openai-pretrained",
-        default=False,
+        default=True,
         action='store_true',
         help="Use the openai pretrained models.",
     )
