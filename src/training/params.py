@@ -210,6 +210,12 @@ def parse_args():
         help="Use multi-node training."
     )
     parser.add_argument(
+        "--spawn",
+        default=False,
+        action="store_true",
+        help="Use MP Spawn to start processes automatically on each node."
+    )
+    parser.add_argument(
         "--rank",
         default=None,
         type=int,

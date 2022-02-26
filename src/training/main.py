@@ -37,7 +37,12 @@ def is_master(args):
 
 def main_worker(gpu, ngpus_per_node, log_queue, args):
     args.gpu = gpu
-    args.rank = gpu if args.rank is None else args.rank
+    if args.spawn:
+        node_rank = int(os.environ['NODE_RANK'])
+        args.rank = node_rank * ngpus_per_node + gpu
+        print(f'Starting worker {args.rank} in node {node_rank}')
+    else:
+        args.rank = gpu if args.rank is None else args.rank
     setup_worker_logging(args.rank, log_queue, args.log_level)
 
     # Log and save params.
@@ -337,12 +342,22 @@ def main():
     args.distributed = (args.gpu is None) and torch.cuda.is_available() and (not args.dp)
     if args.multinode:
         # we assume slurm setup but this should be easily extendable to other setups
-        ngpus_per_node = torch.cuda.device_count()
-        args.rank = int(os.environ["SLURM_PROCID"]) if not args.rank else args.rank
-        args.world_size = int(os.environ["WORLD_SIZE"])
-        os.environ['RANK'] = str(args.rank)
+        if args.spawn:
+            ngpus_per_node = torch.cuda.device_count()
+            args.world_size = int(os.environ["WORLD_SIZE"])
+            assert args.rank is not None
+            os.environ['NODE_RANK'] = str(args.rank)
+        
+            mp.spawn(main_worker, nprocs=ngpus_per_node, args=(ngpus_per_node, args, log_queue))
+        else:
+            ngpus_per_node = torch.cuda.device_count()
+            args.rank = int(os.environ["SLURM_PROCID"]) if not args.rank else args.rank
+            args.world_size = int(os.environ["WORLD_SIZE"])
+            os.environ['RANK'] = str(args.rank)
+        
+            main_worker(args.rank % ngpus_per_node, ngpus_per_node, log_queue, args)
 
-        main_worker(args.rank % ngpus_per_node, ngpus_per_node, log_queue, args)
+
     elif args.distributed:
         ngpus_per_node = torch.cuda.device_count()
         args.world_size = ngpus_per_node
