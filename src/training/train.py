@@ -155,7 +155,7 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
                 if args.wandb:
                     wandb.log({name: val, 'step': timestep})
             
-            if (i % 5000) == 0:
+            if args.rank == 0 and (i % 5000) == 0:
                 torch.save(
                     {
                         "step": num_samples,
