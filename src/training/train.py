@@ -154,6 +154,17 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
                     tb_writer.add_scalar(name, val, timestep)
                 if args.wandb:
                     wandb.log({name: val, 'step': timestep})
+            
+            if (i % 5000) == 0:
+                torch.save(
+                    {
+                        "step": num_samples,
+                        "name": args.name,
+                        "state_dict": model.state_dict(),
+                        "optimizer": optimizer.state_dict(),
+                    },
+                    os.path.join(args.checkpoint_path, f"step_{num_samples}.pt"),
+                )
 
 
 def evaluate(model, data, epoch, args, tb_writer=None, steps=None):

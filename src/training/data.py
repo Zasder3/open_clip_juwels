@@ -65,7 +65,9 @@ def get_dataset_size(shards):
     elif '__len__' in os.listdir(dir_path):
         total_size = eval(open(os.path.join(dir_path, '__len__'), 'r').read())
     else:
-        if 'laion' in dir_path.lower():
+        if 'laion' in dir_path.lower() and 'aws' in dir_path.lower():
+            total_size = 2322161808
+        elif 'laion' in dir_path.lower():
             total_size = 407332084
         else:
             raise ValueError(f'Could not find dataset size in {dir_path}')
