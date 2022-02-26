@@ -349,7 +349,7 @@ def main():
             assert args.rank is not None
             os.environ['NODE_RANK'] = str(args.rank)
         
-            mp.spawn(main_worker, nprocs=ngpus_per_node, args=(ngpus_per_node, args, log_queue))
+            mp.spawn(main_worker, nprocs=ngpus_per_node, args=(ngpus_per_node, log_queue, args))
         else:
             ngpus_per_node = torch.cuda.device_count()
             args.rank = int(os.environ["SLURM_PROCID"]) if not args.rank else args.rank
