@@ -149,7 +149,7 @@ def get_wds_dataset(args, preprocess_img, is_train):
     dataset = (
         wds.WebDataset(shardlist, handler=wds.handlers.warn_and_continue)
         .select(filter_no_caption)
-        .decode("pil")
+        .decode("pil", handler=wds.handlers.warn_and_continue)
         .rename(image="jpg;png", text="txt")
         .map_dict(image=preprocess_img, text=preprocess_txt)
         .to_tuple("image", "text")
