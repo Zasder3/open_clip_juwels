@@ -77,7 +77,7 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
             jit=False,
             is_train=True)
         preprocess_train, preprocess_val = _transform(336, is_train=True), _transform(336, is_train=False)
-        model.positional_embedding = torch.nn.Parameter(1024**-0.5 * torch.randn((336 // 14) ** 2 + 1, 1024))
+        model.VisualTransformer.positional_embedding = torch.nn.Parameter(1024**-0.5 * torch.randn((336 // 14) ** 2 + 1, 1024))
     else:
         model_config_file = Path(__file__).parent / f"model_configs/{args.model.replace('/', '-')}.json"
         print('Loading model from', model_config_file)
@@ -154,7 +154,7 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
                 betas=(args.beta1, args.beta2),
                 eps=args.eps,
             )
-            model.token_embedding = bnb.nn.StableEmbedding(model_info['vocab_size'], model_info['transformer_width'])
+            bnb.optim.GlobalOptimManager.get_instance().register_module_override(model.module.token_embedding, 'weight', {'optim_bits': 32})
         else:
             optimizer = optim.AdamW(
                 [
