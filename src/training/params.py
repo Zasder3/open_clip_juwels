@@ -84,13 +84,13 @@ def parse_args():
     parser.add_argument(
         "--epochs", type=int, default=32, help="Number of epochs to train for."
     )
-    parser.add_argument("--lr", type=float, default=2e-5, help="Learning rate.")
+    parser.add_argument("--lr", type=float, default=1e-5, help="Learning rate.")
     parser.add_argument("--beta1", type=float, default=None, help="Adam beta 1.")
     parser.add_argument("--beta2", type=float, default=None, help="Adam beta 2.")
     parser.add_argument("--eps", type=float, default=None, help="Adam epsilon.")
     parser.add_argument("--wd", type=float, default=0.2, help="Weight decay.")
     parser.add_argument(
-        "--warmup", type=int, default=2000, help="Number of steps to warmup for."
+        "--warmup", type=int, default=5000, help="Number of steps to warmup for."
     )
     parser.add_argument("--use-bn-sync",
         default=False,

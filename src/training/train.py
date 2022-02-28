@@ -114,6 +114,7 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
             with autocast():
                 total_loss = get_loss(model, images, texts, loss_img, loss_txt, args)
                 scaler.scale(total_loss).backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(), args.clip)
                 scaler.step(optimizer)
             scaler.update()
 
