@@ -147,7 +147,7 @@ def get_wds_dataset(args, preprocess_img, is_train):
         split_by_node=is_train  # NOTE: we do eval on a single gpu.
     )
     dataset = (
-        wds.WebDataset(shardlist, handler=wds.handlers.warn_and_continue, shardshuffle=is_train)
+        wds.WebDataset(shardlist, handler=wds.handlers.warn_and_continue)
         .select(filter_no_caption)
         .decode("pil", handler=wds.handlers.warn_and_continue)
         .rename(image="jpg;png", text="txt")
