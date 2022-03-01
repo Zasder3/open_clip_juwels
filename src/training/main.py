@@ -78,8 +78,8 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
             args.model,
             jit=False,
             is_train=True)
-        # preprocess_train, preprocess_val = _transform(336, is_train=True), _transform(336, is_train=False)
-        # model.visual.positional_embedding = torch.nn.Parameter(1024**-0.5 * torch.randn((336 // 14) ** 2 + 1, 1024))
+        preprocess_train, preprocess_val = _transform(336, is_train=True), _transform(336, is_train=False)
+        model.visual.positional_embedding = torch.nn.Parameter(1024**-0.5 * torch.randn((336 // 14) ** 2 + 1, 1024))
         model.logit_scale = torch.nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
         model.visual.transformer.gradient_checkpointing = args.gradient_checkpointing
         model.transformer.gradient_checkpointing = args.gradient_checkpointing
@@ -217,7 +217,8 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
             args.val_sz = data["val"].dataloader.num_samples
         # you will have to configure this for your project!
         wandb.init(
-            project="open-clip",
+            project="CLIP-ViT-L-Finetune",
+            entity="cadegord",
             notes=args.wandb_notes,
             tags=[],
             config=vars(args),

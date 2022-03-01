@@ -121,6 +121,7 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
         else:
             total_loss = get_loss(model, images, texts, loss_img, loss_txt, args)
             total_loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
 
         # Note: we clamp to 4.6052 = ln(100), as in the original paper.
