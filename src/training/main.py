@@ -25,6 +25,8 @@ from training.params import parse_args
 from training.logger import setup_primary_logging, setup_worker_logging
 from training.scheduler import cosine_lr
 
+import numpy as np
+
 # Used by https://github.com/openai/CLIP/issues/83 but not below.
 # Keeping it incase needed.
 def convert_models_to_fp32(model):
@@ -83,6 +85,7 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
         width = model.visual.transformer.width
         scale = width ** -0.5
         model.visual.positional_embedding = torch.nn.Parameter(scale * torch.randn((336 // 14) ** 2 + 1, width))
+        model.logit_scale = torch.nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
         model.visual.transformer.gradient_checkpointing = args.gradient_checkpointing
         model.transformer.gradient_checkpointing = args.gradient_checkpointing
     else:
