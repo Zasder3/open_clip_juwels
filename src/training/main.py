@@ -75,7 +75,7 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
     if args.openai_pretrained:
         model, preprocess_train, preprocess_val = load(
             args.model,
-            device=args.gpu,
+            device='cpu',
             jit=False,
             is_train=True)
         preprocess_train = _transform(336, is_train=True)
