@@ -82,7 +82,7 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
         preprocess_val = _transform(336, is_train=False)
         width = model.visual.transformer.width
         scale = width ** -0.5
-        model.positional_embedding = torch.nn.Parameter(scale * torch.randn((336 // 14) ** 2 + 1, width))
+        model.visual.positional_embedding = torch.nn.Parameter(scale * torch.randn((336 // 14) ** 2 + 1, width))
         model.visual.transformer.gradient_checkpointing = args.gradient_checkpointing
         model.transformer.gradient_checkpointing = args.gradient_checkpointing
     else:
