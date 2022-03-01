@@ -113,6 +113,18 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
         if args.precision == "amp":
             with autocast():
                 total_loss = get_loss(model, images, texts, loss_img, loss_txt, args)
+
+                # Log gradient norms.
+                if args.distributed and args.aggregate:
+                    world_size = dist.get_world_size()
+                    rank = dist.get_rank()
+                    if rank == 0:
+                        grads = []
+                        for param in m.parameters():
+                            grads.append(param.grad.detach().cpu().numpy())
+                        grads = np.concatenate([np.sum(g**2)**0.5 for g in grads], axis=0)
+                        wandb.log({"grad_norm": grads.mean(), "step": epoch * num_batches_per_epoch + i})
+                nn.utils.clip_grad_norm_(model.parameters(), 0.25)
                 scaler.scale(total_loss).backward()
                 scaler.step(optimizer)
             scaler.update()
@@ -123,7 +135,7 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
             optimizer.step()
 
         # Note: we clamp to 4.6052 = ln(100), as in the original paper.
-        m.logit_scale.data = torch.clamp(m.logit_scale.data, 0, 4.6052)
+        m.logit_scale.data = torch.clamp(m.logit_scale.data, 0, np.log(100))
 
         batch_time = time.time() - end
         end = time.time()
@@ -155,7 +167,8 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
                 if args.wandb:
                     wandb.log({name: val, 'step': timestep})
             
-            if i % 2500 == 0:
+            if (i % 100) or (i % 2500) == 0:
+                print('Saving Weights')
                 torch.save(
                     {
                         "step": num_samples,
