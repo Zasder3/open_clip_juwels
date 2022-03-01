@@ -90,7 +90,7 @@ def parse_args():
     parser.add_argument("--eps", type=float, default=None, help="Adam epsilon.")
     parser.add_argument("--wd", type=float, default=0.2, help="Weight decay.")
     parser.add_argument(
-        "--warmup", type=int, default=0, help="Number of steps to warmup for."
+        "--warmup", type=int, default=2000, help="Number of steps to warmup for."
     )
     parser.add_argument("--use-bn-sync",
         default=False,
