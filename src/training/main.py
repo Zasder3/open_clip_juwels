@@ -74,6 +74,7 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
     if args.openai_pretrained:
         model, preprocess_train, preprocess_val = load(
             args.model,
+            device=args.gpu,
             jit=False,
             is_train=True)
         model.visual.transformer.gradient_checkpointing = args.gradient_checkpointing
