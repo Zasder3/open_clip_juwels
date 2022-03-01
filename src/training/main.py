@@ -82,7 +82,7 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
             is_train=True)
         preprocess_train = _transform(336, is_train=True)
         preprocess_val = _transform(336, is_train=False)
-        cls_token = model.visual.positional_embedding.data[0]
+        cls_token = model.visual.positional_embedding.data[0].reshape(1, -1)
         img = model.visual.positional_embedding.data[1:]
         img = img.reshape(1, 1, 224//14, 224//14, 1024)
         img = torch.nn.functional.interpolate(img, (336//14, 336//14, 1024), mode='trilinear', align_corners=True)
