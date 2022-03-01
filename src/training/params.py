@@ -144,7 +144,7 @@ def parse_args():
     )
     parser.add_argument(
         "--openai-pretrained",
-        default=False,
+        default=True,
         action='store_true',
         help="Use the openai pretrained models.",
     )
