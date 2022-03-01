@@ -73,13 +73,13 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
         torch.cuda.set_device(args.gpu)
 
     # Do not use skip_reset unless you want to use on of the CLIP model
-    if args.openai_pretrained:
+    if not args.openai_pretrained: # TODO SWAP BACK
         model, preprocess_train, preprocess_val = load(
             args.model,
             jit=False,
             is_train=True)
         preprocess_train, preprocess_val = _transform(336, is_train=True), _transform(336, is_train=False)
-        model.visual.positional_embedding = torch.nn.Parameter(1024**-0.5 * torch.randn((336 // 14) ** 2 + 1, 1024))
+        model.visual.positional_embedding = torch.nn.Parameter((1024**-0.5) * torch.randn((336 // 14) ** 2 + 1, 1024))
         model.logit_scale = torch.nn.Parameter(torch.ones([]) * np.log(1 / 0.07))
         model.visual.transformer.gradient_checkpointing = args.gradient_checkpointing
         model.transformer.gradient_checkpointing = args.gradient_checkpointing
@@ -93,8 +93,8 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
             model_info['gradient_checkpointing'] = True
         model = CLIP(**model_info)
         convert_weights(model)
-        preprocess_train = _transform(model.visual.input_resolution, is_train=True)
-        preprocess_val = _transform(model.visual.input_resolution, is_train=False)
+        preprocess_train, preprocess_val = _transform(336, is_train=True), _transform(336, is_train=False)
+        model.visual.positional_embedding = torch.nn.Parameter((1024**-0.5) * torch.randn((336 // 14) ** 2 + 1, 1024))
 
 
     # See https://discuss.pytorch.org/t/valueerror-attemting-to-unscale-fp16-gradients/81372
