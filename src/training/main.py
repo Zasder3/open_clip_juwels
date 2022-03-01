@@ -93,8 +93,10 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
             model_info['gradient_checkpointing'] = True
         model = CLIP(**model_info)
         convert_weights(model)
-        preprocess_train, preprocess_val = _transform(336, is_train=True), _transform(336, is_train=False)
-        model.visual.positional_embedding = torch.nn.Parameter((1024**-0.5) * torch.randn((336 // 14) ** 2 + 1, 1024))
+        preprocess_train = _transform(model.visual.input_resolution, is_train=True)
+        preprocess_val = _transform(model.visual.input_resolution, is_train=False)
+        # preprocess_train, preprocess_val = _transform(336, is_train=True), _transform(336, is_train=False)
+        # model.visual.positional_embedding = torch.nn.Parameter((1024**-0.5) * torch.randn((336 // 14) ** 2 + 1, 1024))
 
 
     # See https://discuss.pytorch.org/t/valueerror-attemting-to-unscale-fp16-gradients/81372
