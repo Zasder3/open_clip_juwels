@@ -198,7 +198,8 @@ class Transformer(nn.Module):
         self.layers = layers
         self.gradient_checkpointing = gradient_checkpointing
         if gradient_checkpointing:
-            self.checkpoints = layers
+            self.checkpoints = int((layers)**0.5 + 0.5)
+            # self.checkpoints = layers
         self.resblocks = nn.Sequential(*[ResidualAttentionBlock(width, heads, attn_mask) for _ in range(layers)])
 
     def forward(self, x: torch.Tensor):
