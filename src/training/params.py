@@ -5,7 +5,7 @@ def get_default_params(model_name):
     # Params from paper (https://arxiv.org/pdf/2103.00020.pdf)
     if model_name in ["RN50", "RN101", "RN50x4"]:
         return {"lr": 5.0e-4, "beta1": 0.9, "beta2": 0.999, "eps": 1.0e-8}
-    elif model_name in ["ViT-B/32", "ViT-B/32"]:
+    elif model_name in ["ViT-B/32", "ViT-B/16"]:
         return {"lr": 5.0e-4, "beta1": 0.9, "beta2": 0.98, "eps": 1.0e-6}
     elif model_name in ["ViT-L/14", "ViT-G/14"]:
         return {"lr": 4.0e-4, "beta1": 0.9, "beta2": 0.98, "eps": 1.0e-6}
