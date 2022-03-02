@@ -241,7 +241,7 @@ def parse_args():
     )
     parser.add_argument(
         "--sharded-loss",
-        default=False,
+        default=True,
         action="store_true",
         help="Use sharded loss calculation."
     )
