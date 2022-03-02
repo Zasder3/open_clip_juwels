@@ -235,7 +235,7 @@ def parse_args():
     )
     parser.add_argument(
         "--gradient-checkpointing",
-        default=False,
+        default=True,
         action="store_true",
         help="Use gradient checkpointing."
     )
