@@ -5,7 +5,7 @@ def get_default_params(model_name):
     # Params from paper (https://arxiv.org/pdf/2103.00020.pdf)
     if model_name in ["RN50", "RN101", "RN50x4"]:
         return {"lr": 5.0e-4, "beta1": 0.9, "beta2": 0.999, "eps": 1.0e-8}
-    elif model_name == "ViT-B/32":
+    elif model_name in ["ViT-B/32", "ViT-B/32"]:
         return {"lr": 5.0e-4, "beta1": 0.9, "beta2": 0.98, "eps": 1.0e-6}
     elif model_name in ["ViT-L/14", "ViT-G/14"]:
         return {"lr": 4.0e-4, "beta1": 0.9, "beta2": 0.98, "eps": 1.0e-6}
@@ -82,7 +82,7 @@ def parse_args():
         "--batch-size", type=int, default=64, help="Batch size per GPU."
     )
     parser.add_argument(
-        "--epochs", type=int, default=32, help="Number of epochs to train for."
+        "--epochs", type=int, default=30, help="Number of epochs to train for."
     )
     parser.add_argument("--lr", type=float, default=None, help="Learning rate.")
     parser.add_argument("--beta1", type=float, default=None, help="Adam beta 1.")
@@ -90,7 +90,7 @@ def parse_args():
     parser.add_argument("--eps", type=float, default=None, help="Adam epsilon.")
     parser.add_argument("--wd", type=float, default=0.2, help="Weight decay.")
     parser.add_argument(
-        "--warmup", type=int, default=10000, help="Number of steps to warmup for."
+        "--warmup", type=int, default=2000, help="Number of steps to warmup for."
     )
     parser.add_argument("--use-bn-sync",
         default=False,
@@ -138,8 +138,8 @@ def parse_args():
     )
     parser.add_argument(
         "--model",
-        choices=["RN50", "RN101", "RN50x4", "ViT-B/32", "ViT-L/14", "ViT-G/14"],
-        default="ViT-L/14",
+        choices=["RN50", "RN101", "RN50x4", "ViT-B/32", "ViT-B/32", "ViT-L/14", "ViT-G/14"],
+        default="ViT-B/16",
         help="Name of the vision backbone to use.",
     )
     parser.add_argument(
@@ -241,7 +241,7 @@ def parse_args():
     )
     parser.add_argument(
         "--sharded-loss",
-        default=False,
+        default=True,
         action="store_true",
         help="Use sharded loss calculation."
     )

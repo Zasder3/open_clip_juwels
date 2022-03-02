@@ -59,7 +59,8 @@ def get_dataset_size(shards):
     shards_list = list(braceexpand.braceexpand(shards))
     dir_path = os.path.dirname(shards)
     if 'aws' in dir_path:
-        total_size = 2322161808
+        total_size = 407332084
+        # total_size = 2322161808
     elif 'sizes.json' in os.listdir(dir_path):
         sizes_filename = os.path.join(dir_path, 'sizes.json')
         sizes = json.load(open(sizes_filename, 'r'))

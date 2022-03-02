@@ -250,6 +250,7 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
                         "name": args.name,
                         "state_dict": model.state_dict(),
                         "optimizer": optimizer.state_dict(),
+                        "scaler": scaler.state_dict(),
                     },
                     os.path.join(args.checkpoint_path, f"epoch_{epoch + 1}.pt"),
                 )
@@ -260,6 +261,7 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
                         "name": args.name,
                         "state_dict": model.state_dict(),
                         "optimizer": optimizer.state_dict(),
+                        "scaler": scaler.state_dict(),
                     },
                     os.path.join(args.checkpoint_path, f"epoch_latest.pt"),
                 )
