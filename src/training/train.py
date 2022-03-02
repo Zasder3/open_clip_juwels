@@ -114,13 +114,14 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
             with autocast():
                 total_loss = get_loss(model, images, texts, loss_img, loss_txt, args)
                 scaler.scale(total_loss).backward()
-                # if args.rank == 0:
-                #     grads = []
-                #     for param in model.parameters():
-                #         grads.append(param.grad.detach().data.norm(2))
-                #     grads = torch.concatenate(grads, axis=0)
-                #     wandb.log({"grad_norm": grads.mean().item(), "step": epoch * num_batches_per_epoch + i})
-                nn.utils.clip_grad_norm_(model.parameters(), 0.25)
+                if args.rank == 0:
+                    grads = []
+                    params = [p for p in model.parameters() if p.requires_grad and p.grad is not None]
+                    for param in params:
+                        grads.append(param.grad.detach().data.norm(2))
+                    grads = torch.concatenate(grads, axis=0)
+                    wandb.log({"grad_norm": grads.mean().item(), "step": epoch * num_batches_per_epoch + i})
+                nn.utils.clip_grad_norm_(model.parameters(), 0.5)
                 scaler.step(optimizer)
             scaler.update()
 
@@ -162,7 +163,7 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
                 if args.wandb:
                     wandb.log({name: val, 'step': timestep})
             
-            if (i % 100) == 0 or (i % 2500) == 0:
+            if (i % 2500) == 0:
                 print('Saving Weights')
                 torch.save(
                     {
