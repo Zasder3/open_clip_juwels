@@ -162,7 +162,7 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
                 if args.wandb:
                     wandb.log({name: val, 'step': timestep})
             
-            if (i % 100) or (i % 2500) == 0:
+            if (i % 100) == 0 or (i % 2500) == 0:
                 print('Saving Weights')
                 torch.save(
                     {
