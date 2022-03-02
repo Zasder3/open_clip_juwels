@@ -185,6 +185,8 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
             model.load_state_dict(sd)
             if optimizer is not None:
                 optimizer.load_state_dict(checkpoint["optimizer"])
+            if scaler is not None:
+                scaler.load_state_dict(checkpoint["scaler"])
             logging.info(
                 f"=> loaded checkpoint '{args.resume}' (epoch {checkpoint['epoch']})"
             )
@@ -215,8 +217,7 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
             tags=[],
             config=vars(args),
         )
-        if args.debug:
-            wandb.watch(model, log='all')
+        wandb.watch(model, log='all', log_freq=50)
         wandb.save(params_file)
         logging.debug('Finished loading wandb.')
 
