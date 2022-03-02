@@ -128,7 +128,7 @@ def train(model, data, epoch, optimizer, scaler, scheduler, args, tb_writer=None
         batch_time = time.time() - end
         end = time.time()
 
-        if is_master(args) and (i % 100) == 0:
+        if is_master(args) and (i % 1) == 0:
             num_samples = i * len(images) * args.world_size
             samples_per_epoch = dataloader.num_samples
             percent_complete = 100.0 * i / num_batches_per_epoch
