@@ -84,8 +84,10 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
         preprocess_val = _transform(336, is_train=False)
         cls_token = model.visual.positional_embedding.data[0].reshape(1, -1)
         img = model.visual.positional_embedding.data[1:]
-        img = img.reshape(1, 1, 224//14, 224//14, 1024)
-        img = torch.nn.functional.interpolate(img, (336//14, 336//14, 1024), mode='trilinear', align_corners=True)
+        img = img.reshape(1, 224//14, 224//14, 1024)
+        img = img.permute(0, 3, 1, 2)
+        img = torch.nn.functional.interpolate(img, (336//14, 336//14), mode='bilinear', align_corners=True)
+        img = img.permute(0, 2, 3, 1)
         img = img.reshape((336//14)**2, 1024)
         model.visual.positional_embedding.data = torch.cat([cls_token, img], dim=0)
         # width = model.visual.transformer.width
