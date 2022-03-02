@@ -233,8 +233,7 @@ def main_worker(gpu, ngpus_per_node, log_queue, args):
             tags=[],
             config=vars(args),
         )
-        if args.debug:
-            wandb.watch(model, log='all')
+        wandb.watch(model, log='all')
         wandb.save(params_file)
         logging.debug('Finished loading wandb.')
 
