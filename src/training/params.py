@@ -126,7 +126,7 @@ def parse_args():
     )
     parser.add_argument(
         "--resume",
-        default="/home/ubuntu/cade/open_clip_juwels/logs/lr=0.0005_wd=0.2_agg=True_model=ViT-B/16_batchsize=342_workers=8_date=2022-03-02-10-43-09/checkpoints/epoch_1.pt",
+        default="/fsx/1/cade/epoch_1.pt",
         type=str,
         help="path to latest checkpoint (default: none)",
     )
